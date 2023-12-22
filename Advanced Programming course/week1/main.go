@@ -1,69 +1,104 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"io"
+	"reflect"
 )
 
-
-func sendRequest(url string, payload map[string]interface{}) (string, error) {
-	jsonPayload, err := json.Marshal(payload)
-	if err != nil {
-		return "", err
-	}
-
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonPayload))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(body), nil
+type SignUpRequest struct {
+	FirstName string `json:"first_name"`
+	Login     string `json:"login"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 }
 
-func parseResponse(response string) (map[string]interface{}, error) {
-	var result map[string]interface{}
-	err := json.Unmarshal([]byte(response), &result)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
+type JsonRequest struct {
+	Message string `json:"message"`
 }
+
+type JsonResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+const PORT string = ":8080"
 
 func main() {
-    url := "https://jsonplaceholder.typicode.com/posts"
-	payload := map[string]interface{}{
-		"key1": "value1",
-		"key2": 42,
-	}
+	http.HandleFunc("/", handlePostRequest)
+	http.HandleFunc("/signup", handleSignup)
+	fmt.Printf("Server listening on port %s...\n", PORT)
+	http.ListenAndServe(PORT, nil)
+}
 
-	// Send Request
-	response, err := sendRequest(url, payload)
-	if err != nil {
-		fmt.Println("Error sending request:", err)
+func handlePostRequest(res http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		http.Error(res, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	fmt.Println("Response:", response)
+	decoder := json.NewDecoder(req.Body)
+	var requestData JsonRequest
 
-	// Parse Response
-	parsedData, err := parseResponse(response)
+	err := decoder.Decode(&requestData)
 	if err != nil {
-		fmt.Println("Error parsing response:", err)
+		http.Error(res, "Invalid JSON format", http.StatusBadRequest)
 		return
 	}
 
-	// Display Results
-	fmt.Println("Parsed Data:")
-	for key, value := range parsedData {
-		fmt.Printf("%s: %v\n", key, value)
+	if requestData.Message == "" {
+		http.Error(res, "Invalid JSON message", http.StatusBadRequest)
+		return
 	}
+
+	fmt.Printf("Received message: %s\n", requestData.Message)
+
+	response := JsonResponse{
+		Status:  "success",
+		Message: "Data successfully received",
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusOK)
+	json.NewEncoder(res).Encode(response)
+}
+
+func handleSignup(res http.ResponseWriter, req *http.Request) {
+	if http.MethodPost != req.Method {
+		http.Error(res, "Method not allowed", http.StatusBadRequest)
+		return
+	}
+
+	decoder := json.NewDecoder(req.Body)
+	var requestData SignUpRequest
+	err := decoder.Decode(&requestData)
+
+	if err != nil {
+		http.Error(res, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	requestDataType := reflect.TypeOf(requestData)
+	for i := 0; i < requestDataType.NumField(); i++ {
+		if reflect.ValueOf(requestData).Field(i).Interface() == "" {
+			http.Error(res, "Invalid JSON data, some fields are empty", http.StatusBadRequest)
+			return
+		}
+	}
+
+	for i := 0; i < requestDataType.NumField(); i++ {
+		fieldName := requestDataType.Field(i).Name
+		fieldValue := reflect.ValueOf(requestData).Field(i).Interface()
+		fmt.Printf("%s : %v \n", fieldName, fieldValue)
+	}
+
+	response := JsonResponse{
+		Status:  "OK",
+		Message: "Data successfully received",
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusOK)
+	json.NewEncoder(res).Encode(response)
 }
