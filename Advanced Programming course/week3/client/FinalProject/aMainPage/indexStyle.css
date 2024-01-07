@@ -1,0 +1,204 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(253,252,255);
+    background: linear-gradient(90deg, rgba(253,252,255,1) 0%, rgba(255,252,180,1) 50%, rgba(253,252,255,1) 100%);
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+
+.navbar a {
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    color: #0a53be;
+}
+
+.about-us, .image-carousel, .reservation, .reviews, .contact-info {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.about-us h2, .image-carousel h2, .reservation h2, .reviews h2, .contact-info h2 {
+    color: #0a53be;
+}
+
+.reservation form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.reservation h2 {
+    color: #0a53be;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #0a53be;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #003d89;
+}
+.reviews p {
+    font-style: italic;
+    color: #666;
+}
+.customer-img {
+    max-width: 70%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 50%;
+}
+.contact-info p {
+    margin-bottom: 10px;
+}
+
+.contact-info a {
+    color: #0a53be;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+.carousel-inner img {
+    width: auto;
+    max-height: 55%;
+    margin: 0 auto;
+    display: block;
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    background-color: #0a53be;
+    padding: 15px;
+    border-radius: 50%;
+}
+.carousel-control-prev-icon:before, .carousel-control-next-icon:before {
+    color: #fff;
+    font-size: 24px;
+}
+
+footer p {
+    color: #666;
+}
+.quiz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.question {
+    display: none;
+}
+
+.question.visible {
+    display: block;
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+#submitQuiz,
+#restartQuiz {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+#submitQuiz:hover,
+#restartQuiz:hover {
+    background-color: #0056b3;
+}
+
+.video-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #fcfcbc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+#video-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+#scrollBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    background-color: #0a53be;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 50%;
+}
+
+#scrollBtn:hover {
+    background-color: #0a4298;
+}
+
+
+@media (max-width: 900px) {
+    .image-carousel {
+        display: none;
+    }
+}
+@media (min-width: 901px) and (max-width: 1299px) {
+
+}
+@media (min-width: 1300px) {
+
+}

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>main</title>
+    <link rel="icon" type="image/png" href="FinalProject/aMainPage/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="FinalProject/aMainPage/indexStyle.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body">
+    <div class="container">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="FinalProject/MenuPage/Menu.html">Menu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="FinalProject/SignInPage/SignIn.html">Sign in/Log in</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<header class="container-fluid text-center py-4" style="background: linear-gradient(90deg, rgba(253,252,255,1) 0%, rgba(255,252,180,1) 50%, rgba(253,252,255,1) 100%)">
+    <h1>Welcome to Omii's Cuisine</h1>
+</header>
+
+<section class="about-us">
+    <div class="container">
+        <h2>About Us</h2>
+        <p>Discover a world of culinary delights at our restaurant. We pride ourselves on serving delicious dishes prepared with the finest ingredients and a touch of passion. Whether you're looking for a cozy dinner for two or a place to host a special event, we have you covered.</p>
+        <p>Our menu features a wide range of breakfast, lunch, and dinner options, each crafted to satisfy your cravings. Join us for a memorable dining experience that will tantalize your taste buds and leave you craving for more.</p>
+        <p>Visit us today and indulge in the flavors of Omii's Cuisine!</p>
+    </div>
+</section>
+
+<section class="image-carousel">
+    <div id="restaurantCarousel" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#restaurantCarousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#restaurantCarousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#restaurantCarousel" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://static.dezeen.com/uploads/2022/04/laurel-brasserie-bar_home-studios_dezeen_hero1-852x479.jpg" class="d-block" alt="Restaurant Interior 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://static.dezeen.com/uploads/2022/04/laurel-brasserie-bar_home-studios_dezeen_2364_col_2-852x568.jpg" class="d-block" alt="Restaurant Interior 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://static.dezeen.com/uploads/2022/04/laurel-brasserie-bar_home-studios_dezeen_2364_col_6-852x682.jpg" class="d-block" alt="Restaurant Interior 3">
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#restaurantCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#restaurantCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
+    </div>
+</section>
+
+<section class="video-container">
+    <div id="video-wrapper">
+        <video id="video-frame" width="760" height="315" controls>
+            <source src="FinalProject/aMainPage/rest.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div id="youtubeVideo">
+        <iframe id="youtubeFrame" width="760" height="315" src="" frameborder="0" allowfullscreen></iframe>
+        <button id="fullScreenBtn" onclick="openFullscreen()" >Full Screen</button>
+    </div>
+</section>
+
+<section class="reservation">
+    <div class="container">
+        <h2>Make a Reservation</h2>
+        <form>
+            <div class="form-group">
+                <label for="reservation-date">Date</label>
+                <input type="date" class="form-control" id="reservation-date" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-time">Time</label>
+                <input type="time" class="form-control" id="reservation-time" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-guests">Number of Guests</label>
+                <input type="number" class="form-control" id="reservation-guests" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-name">Name</label>
+                <input type="text" class="form-control" id="reservation-name" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-email">Email</label>
+                <input type="email" class="form-control" id="reservation-email" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-phone">Phone</label>
+                <input type="tel" class="form-control" id="reservation-phone" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Reservation</button>
+        </form>
+    </div>
+</section>
+
+    <!-- Quiz Section -->
+    <section class="quiz text-center">
+        <h3>How familiar are you with world cuisine?</h3>
+        <div id="quiz">
+
+            <div class="question visible">
+                <p>1. Which cuisine is known for sushi and sashimi?</p>
+                <select name="q1">
+                    <option value="Japanese">Japanese</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Mexican">Mexican</option>
+                    <option value="Chinese">Chinese</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>2. What country is famous for its paella dish?</p>
+                <select name="q2">
+                    <option value="Spain">Spain</option>
+                    <option value="France">France</option>
+                    <option value="Italy">Italy</option>
+                    <option value="Greece">Greece</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>3. Which cuisine uses a lot of spices such as cumin, turmeric, and coriander?</p>
+                <select name="q3">
+                    <option value="Indian">Indian</option>
+                    <option value="Thai">Thai</option>
+                    <option value="Vietnamese">Vietnamese</option>
+                    <option value="Greek">Greek</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>4. What is the main ingredient in hummus?</p>
+                <select name="q4">
+                    <option value="Chickpeas">Chickpeas</option>
+                    <option value="Tomatoes">Tomatoes</option>
+                    <option value="Eggplant">Eggplant</option>
+                    <option value="Pasta">Pasta</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>5. Which cuisine is known for its use of beans, tortillas, and chili peppers?</p>
+                <select name="q5">
+                    <option value="Mexican">Mexican</option>
+                    <option value="Chinese">Chinese</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Italian">Italian</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>6. What is the traditional dish of the Thanksgiving meal in the United States?</p>
+                <select name="q6">
+                    <option value="Turkey">Turkey</option>
+                    <option value="Pizza">Pizza</option>
+                    <option value="Sushi">Sushi</option>
+                    <option value="Pasta">Pasta</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>7. What type of food is traditionally eaten in the Japanese New Year?</p>
+                <select name="q7">
+                    <option value="Osechi">Osechi</option>
+                    <option value="Burger">Burger</option>
+                    <option value="Pizza">Pizza</option>
+                    <option value="Taco">Taco</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>8. What is the key ingredient in a Margherita pizza?</p>
+                <select name="q8">
+                    <option value="Tomato">Tomato</option>
+                    <option value="Bacon">Bacon</option>
+                    <option value="Mushrooms">Mushrooms</option>
+                    <option value="Pineapple">Pineapple</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>9. What is the primary ingredient in a traditional Greek moussaka?</p>
+                <select name="q9">
+                    <option value="Eggplant">Eggplant</option>
+                    <option value="Zucchini">Zucchini</option>
+                    <option value="Potato">Potato</option>
+                    <option value="Carrot">Carrot</option>
+                </select>
+            </div>
+
+            <div class="question">
+                <p>10. Which cuisine is known for its use of kimchi and bulgogi?</p>
+                <select name="q10">
+                    <option value="Korean">Korean</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Thai">Thai</option>
+                </select>
+            </div>
+        </div>
+        <div class="button-container">
+            <button id="submitQuiz">Submit Quiz</button>
+            <button id="restartQuiz">Restart Quiz</button>
+        </div>
+        <p id="quizResult"></p>
+    </section>
+
+<section class="reviews">
+    <div class="container">
+        <h2>Customer Reviews</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="review">
+                    <img class="customer-img" src="https://img.freepik.com/premium-photo/3d-avatar-boy-character_914455-603.jpg" alt="Customer 1">
+                    <h3>John Doe</h3>
+                    <p>"I had an amazing dining experience at Omii's Cuisine. The food was exquisite, and the service was top-notch. I can't wait to visit again!"</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="review">
+                    <img class="customer-img" src="https://img.freepik.com/premium-photo/3d-cartoon-little-boy-red-hair-freckled-face-glasses-white-background_812426-4953.jpg" class="rounded-circle" alt="Customer 2">
+                    <h3>Jane Smith</h3>
+                    <p>"Omii's Cuisine is the perfect place for a romantic dinner. The ambiance is charming, and the food is simply divine. Highly recommended!"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer" style="background-color: #fdfcff; color: #fff;">
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 style="color: black">About Us</h3>
+            <p>Address: 32 aa street, 000101, Astana</p>
+            <p>Phone: +77075757575</p>
+        </div>
+        <div class="col-md-6">
+            <h3 style="color: black">Social Networks</h3>
+            <p>Email: <a href="mailto:omilashka@gmail.com"  >omilashka@gmail.com</a></p>
+            <p>Instagram: <a href="https://www.instagram.com/your-instagram-page/">@omii</a></p>
+            <p>Telegram: <a href="https://t.me/Adiqde">@Adiqde</a></p>
+        </div>
+    </div>
+</div>
+</footer>
+
+<button onclick="topFunction()" id="scrollBtn" title="Go to top">Top</button>
+
+<script src="FinalProject/aMainPage/quiz.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Retrieve the YouTube video ID
+    const youtubeLink = 'https://www.youtube.com/watch?v=HS24PywYlxg&ab_channel=SkyrecordsFilmGmbH';
+    const videoId = youtubeLink.split('v=')[1];
+
+    // Create and append the iframe for the YouTube video
+    const youtubeFrame = document.getElementById('youtubeFrame');
+    const fullScreenBtn = document.getElementById('fullScreenBtn');
+
+    function loadYouTubeVideo(videoId) {
+        youtubeFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}`;
+    }
+
+    loadYouTubeVideo(videoId);
+
+    function openFullscreen() {
+        const elem = document.getElementById('youtubeFrame');
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+    }
+
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () {
+        scrollFunction();
+    };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById('scrollBtn').style.display = 'block';
+        } else {
+            document.getElementById('scrollBtn').style.display = 'none';
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+
+</script>
+</body>
+</html>
