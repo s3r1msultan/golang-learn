@@ -9,13 +9,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"reflect"
+	"strconv"
+	"strings"
 )
 
 type DeliveryRequest struct {
-	FullName    string `json:"full_name"`
+	ID          int32  `json:"id"`
 	Address     string `json:"address"`
 	City        string `json:"city"`
-	ZipCode     uint32 `json:"zip_code"`
+	ZipCode     string `json:"zip_code"`
 	PhoneNumber string `json:"phone_number"`
 }
 
@@ -24,33 +26,50 @@ type JSONResponse struct {
 	Message string `json:"message"`
 }
 
-const PORT string = ":8080"
+const PORT string = ":4000"
 const DATABASE string = "go_restaurants"
 const COLLECTION string = "restaurants"
 
+var mux *http.ServeMux
+
 func main() {
-	http.HandleFunc("/", handleHome)
-	http.HandleFunc("/delivery", handleDelivery)
+	mux = http.NewServeMux()
+	mux.HandleFunc("/", handleHome)
+	mux.HandleFunc("/delivery", handleDelivery)
+	mux.HandleFunc("/profile", handleProfile)
+	mux.HandleFunc("/profile/addresses", GetAllAddressesHandler)
+	mux.HandleFunc(`/profile/deleteAddress/`, DeleteAddressHandler)
+
 	fmt.Printf("Server listening on port %s...\n", PORT)
-	http.ListenAndServe(PORT, nil)
+	http.ListenAndServe(PORT, mux)
 }
 
 func handleHome(res http.ResponseWriter, req *http.Request) {
 	if http.MethodGet != req.Method {
-		http.Error(res, "Method not allowed", http.StatusBadRequest)
+		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	http.ServeFile(res, req, "../client/FinalProject/DeliveryAddressPage/Delivery.html")
 }
 
+func handleProfile(res http.ResponseWriter, req *http.Request) {
+	if http.MethodGet != req.Method {
+		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	http.ServeFile(res, req, "../client/FinalProject/UserProfilePage/UserProfile.html")
+}
+
 func handleDelivery(res http.ResponseWriter, req *http.Request) {
 	if http.MethodPost != req.Method {
-		http.Error(res, "Method not allowed", http.StatusBadRequest)
+		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	decoder := json.NewDecoder(req.Body)
+
 	var requestData DeliveryRequest
 	var responseData JSONResponse
 	var isSuccessful bool = true
@@ -132,24 +151,33 @@ func insertDataToMongoDB(data DeliveryRequest) error {
 	return nil
 }
 
-func createDeliveryAddress(data DeliveryRequest) (*mongo.InsertOneResult, error) {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://root:root@nosqlcourse.eyuhz6s.mongodb.net/")
-	client, err := mongo.Connect(context.Background(), clientOptions)
-	if err != nil {
-		return nil, err
+func DeleteAddressHandler(w http.ResponseWriter, r *http.Request) {
+	if http.MethodDelete != r.Method {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
-	defer client.Disconnect(context.Background())
+	pathSegments := strings.Split(r.URL.Path, "/")
 
-	collection := client.Database(DATABASE).Collection(COLLECTION)
-	result, err := collection.InsertOne(context.Background(), data)
+	idStr := pathSegments[len(pathSegments)-1]
+
+	// Convert the ID from string to int32
+	id, err := strconv.ParseInt(idStr, 10, 32)
 	if err != nil {
-		return nil, err
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
 	}
 
-	return result, nil
+	_, err = deleteDeliveryAddressByID(int32(id))
+	if err != nil {
+		// Handle error: Deletion failed
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(JSONResponse{Status: http.StatusOK, Message: "Address deleted successfully!"})
 }
 
-func getDeliveryAddressByID(id string) (*DeliveryRequest, error) {
+func deleteDeliveryAddressByID(id int32) (*mongo.DeleteResult, error) {
 	clientOptions := options.Client().ApplyURI("mongodb+srv://root:root@nosqlcourse.eyuhz6s.mongodb.net/")
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
@@ -159,50 +187,7 @@ func getDeliveryAddressByID(id string) (*DeliveryRequest, error) {
 
 	collection := client.Database(DATABASE).Collection(COLLECTION)
 
-	var deliveryAddress DeliveryRequest
-	err = collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&deliveryAddress)
-	if err != nil {
-		return nil, err
-	}
-
-	return &deliveryAddress, nil
-}
-
-func updateDeliveryAddressNameByID(id string, newName string) (*mongo.UpdateResult, error) {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://root:root@nosqlcourse.eyuhz6s.mongodb.net/")
-	client, err := mongo.Connect(context.Background(), clientOptions)
-	if err != nil {
-		return nil, err
-	}
-	defer client.Disconnect(context.Background())
-
-	collection := client.Database(DATABASE).Collection(COLLECTION)
-
-	result, err := collection.UpdateOne(
-		context.Background(),
-		bson.M{"_id": id},
-		bson.D{
-			{"$set", bson.D{{"full_name", newName}}},
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
-}
-
-func deleteDeliveryAddressByID(id string) (*mongo.DeleteResult, error) {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://root:root@nosqlcourse.eyuhz6s.mongodb.net/")
-	client, err := mongo.Connect(context.Background(), clientOptions)
-	if err != nil {
-		return nil, err
-	}
-	defer client.Disconnect(context.Background())
-
-	collection := client.Database(DATABASE).Collection(COLLECTION)
-
-	result, err := collection.DeleteOne(context.Background(), bson.M{"_id": id})
+	result, err := collection.DeleteOne(context.Background(), bson.M{"id": id})
 	if err != nil {
 		return nil, err
 	}
@@ -233,4 +218,13 @@ func getAllDeliveryAddresses() ([]DeliveryRequest, error) {
 	}
 
 	return deliveryAddresses, nil
+}
+
+func GetAllAddressesHandler(w http.ResponseWriter, r *http.Request) {
+	addresses, err := getAllDeliveryAddresses()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(addresses)
 }

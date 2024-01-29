@@ -19,16 +19,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="../OrderHistoryPage/History.html">Order History</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../BonusPage/Bonus.html">Bonuses</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../DeliveryAddressPage/Delivery.html">Delivery Address</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../SupportPage/Support.html">Contact Support</a>
+          <a class="nav-link" href="/">Delivery Address</a>
         </li>
       </ul>
     </div>
@@ -50,214 +41,82 @@
             <strong>Email:</strong> abvgd@example.com<br>
             <strong>Contact Phone:</strong> +1234567890
           </p>
+          <div id="address-list" class="d-flex flex-wrap justify-content-start"></div>
+
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<section id="to-do-list">
-  <div class="container">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="card-title">To-Do List</h3>
-        <ul id="task-list" class="list-group">
-        </ul>
-        <input type="text" id="task" class="form-control" placeholder="Add a new task">
-        <button class="btn btn-primary mt-2" id="addTask">Add Task</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Countdown -->
-<section class="countdown-container">
-  <h3>Countdown Timer</h3>
-  <div class="timer" id="countdown-timer">00:00:00</div>
-  <div class="timer-controls">
-    <input type="number" id="hours" min="0" placeholder="Hours">
-    <input type="number" id="minutes" min="0" placeholder="Minutes">
-    <input type="number" id="seconds" min="0" placeholder="Seconds">
-    <button class="btn btn-primary" id="start-timer">Start</button>
-    <button class="btn btn-secondary" id="resume-timer" disabled>Resume</button>
-    <button class="btn btn-secondary" id="stop-timer">Stop</button>
-  </div>
-</section>
-<audio id="timerSound">
-  <source src="sound-effect1.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-<hr>
-<section class="score">
-  <span class="correct">0</span>/<span class="total">0</span>
-  <button id="play-again-btn">Play Again</button>
-</section>
-<section class="draggable-items">
-  <i class="fab fa-codepen draggable" draggable="true" style="color: #111111;" id="codepen"></i>
-</section>
-<section class="matching-pairs">
-  <div class="matching-pair">
-    <span class="label">Codepen</span><span class="droppable" data-brand="codepen"></span>
-  </div>
-</section>
 
 <script>
-  // Function to delete a task from the To-Do List
-  function deleteTask(button) {
-    const listItem = button.parentElement.parentElement.parentElement.parentElement;
-    listItem.remove();
-  }
-
-  // Function to mark a task as completed or incomplete
-  function completeTask(button) {
-    const task = button.parentElement.parentElement.querySelector(".task-name");
-    task.classList.toggle("completed-task");
-
-    const completeButton = button;
-    if (task.classList.contains("completed-task")) {
-      completeButton.textContent = "Incomplete";
-      completeButton.style.backgroundColor = "#f7c92f";
-    } else {
-      completeButton.textContent = "Complete";
-      completeButton.style.backgroundColor = "green";
-    }
-  }
-
-
-  // Add a task when the "Add Task" button is clicked
   document.addEventListener("DOMContentLoaded", function () {
-    const addTaskButton = document.getElementById("addTask");
-    const taskInput = document.getElementById("task");
-    const taskList = document.getElementById("task-list");
-    addTaskButton.addEventListener("click", addTask);
-    // Add a task when the "Enter" key is pressed in the task input field
-    taskInput.addEventListener("keyup", function (event) {
-      if (event.key === "Enter") {
-        addTask();
-      }
-    });
+    fetch('http://localhost:4000/profile/addresses')
+            .then(response => response.json())
+            .then(data => {
+              const addressList = document.getElementById('address-list');
+              data.forEach((address, i) => {
+                const addressCard = document.createElement('div');
+                addressCard.className = 'card address';
+                addressCard.dataset.id = address.id
+                addressCard.style = 'width: 18rem; margin-bottom: 1rem; margin-right: 1.5rem;';
 
 
-    // Function to add a new task to the To-Do List
-    function addTask() {
-      const taskText = taskInput.value;
-      if (taskText) {
-        const taskItem = document.createElement("li");
-        taskItem.classList.add("list-group-item");
-        taskItem.innerHTML = `
-                    <div class="task-container">
-                        <div class="added-task">
-                            <div class="task-name larger-text">${taskText}</div>
-                            <div class="task-buttons">
-                                <button class="btn btn-sm btn-danger" onclick="deleteTask(this)">Delete</button>
-                                <button class="btn btn-sm btn-success" onclick="completeTask(this)">Complete</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-        taskList.appendChild(taskItem);
-        taskInput.value = "";
-      }
-    }
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+
+                const addressText = document.createElement('p');
+                addressText.className = 'card-text';
+                addressText.innerHTML = `<strong>Address</strong>: ${address.address}`;
+
+                const city = document.createElement('p');
+                city.className = 'card-text';
+                city.innerHTML = `<strong>City</strong>: ${address.city}`;
+
+                const zip = document.createElement('p');
+                zip.className = 'card-text';
+                zip.innerHTML = `<strong>Zip</strong>: ${address.zip_code}`;
+
+                const phone = document.createElement('p');
+                phone.className = 'card-text';
+                phone.innerHTML = `<strong>Phone</strong>: ${address.phone_number}`;
+
+                const button = document.createElement('button');
+                button.className = 'btn btn-danger';
+                button.textContent = `Delete`;
+                button.addEventListener("click", () => {
+                    if(confirm('Are you sure you want to delete this address?')) {
+                      fetch(`/profile/deleteAddress/${address.id}`, { method: 'DELETE' })
+                              .then(response => response.json())
+                              .then(data => {
+                                document.querySelector(`.address[data-id="${address.id}"]`).remove();
+                                alert('Address deleted successfully');
+                              })
+                              .catch(error => {
+                                console.error('Error:', error);
+                              });
+                    }
+                })
+                //
+                // <button className="delete-button" onClick="deleteAddress('someUniqueId')">Delete</button>
+
+                cardBody.appendChild(addressText);
+                cardBody.appendChild(city);
+                cardBody.appendChild(zip);
+                cardBody.appendChild(phone);
+                cardBody.appendChild(button)
+
+                addressCard.appendChild(cardBody);
+                addressList.appendChild(addressCard);
+              });
+            })
+            .catch(error => {
+              console.error('Error fetching addresses:', error);
+            });
   });
 
 
-  // Script code for Countdown Timer
-  const timerDisplay = document.getElementById("countdown-timer");
-  const hoursInput = document.getElementById("hours");
-  const minutesInput = document.getElementById("minutes");
-  const secondsInput = document.getElementById("seconds");
-  const startButton = document.getElementById("start-timer");
-  const stopButton = document.getElementById("stop-timer");
-  const resumeButton = document.getElementById("resume-timer");
-  let timerInterval;
-  let remainingTime = 0;
-  let isTimerRunning = false;
-
-  // Function to update the timer display
-  function updateTimerDisplay() {
-    const hours = String(Math.floor(remainingTime / 3600)).padStart(2, '0');
-    const minutes = String(Math.floor((remainingTime % 3600) / 60)).padStart(2, '0');
-    const seconds = String(remainingTime % 60).padStart(2, '0');
-    timerDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-  }
-
-  // Function to show an alert when the timer is up
-  function timeIsUp() {
-    clearInterval(timerInterval);
-    isTimerRunning = false;
-    startButton.removeAttribute('disabled');
-    resumeButton.setAttribute('disabled', 'disabled');
-    alert("Time is UP");
-    // Play the sound effect
-    const timerSound = document.getElementById("timerSound");
-    timerSound.play();
-    // Add animation to the countdown timer
-    const timerDisplay = document.getElementById("countdown-timer");
-    timerDisplay.classList.add("flash");
-  }
-
-
-
-  // Event listener for the "Start" button
-  startButton.addEventListener("click", function () {
-    if (!isTimerRunning) {
-      const hours = parseInt(hoursInput.value) || 0;
-      const minutes = parseInt(minutesInput.value) || 0;
-      const seconds = parseInt(secondsInput.value) || 0;
-
-      remainingTime = hours * 3600 + minutes * 60 + seconds;
-      updateTimerDisplay();
-      isTimerRunning = true;
-
-      timerInterval = setInterval(function () {
-        if (remainingTime > 0) {
-          remainingTime--;
-          updateTimerDisplay();
-        } else {
-          timeIsUp();
-        }
-      }, 1000);
-
-      startButton.setAttribute('disabled', 'disabled');
-      resumeButton.setAttribute('disabled', 'disabled');
-      stopButton.removeAttribute('disabled');
-    }
-  });
-
-  // Event listener for the "Stop" button
-  stopButton.addEventListener("click", function () {
-    if (isTimerRunning) {
-      clearInterval(timerInterval);
-      isTimerRunning = false;
-      startButton.removeAttribute('disabled');
-      resumeButton.removeAttribute('disabled');
-      stopButton.setAttribute('disabled', 'disabled');
-    }
-    // Stop the flash animation and reset it
-    timerDisplay.classList.remove("flash");
-  });
-
-  // Event listener for the "Resume" button
-  resumeButton.addEventListener("click", function () {
-    if (!isTimerRunning) {
-      isTimerRunning = true;
-
-      timerInterval = setInterval(function () {
-        if (remainingTime > 0) {
-          remainingTime--;
-          updateTimerDisplay();
-        } else {
-          timeIsUp();
-        }
-      }, 1000);
-
-      startButton.setAttribute('disabled', 'disabled');
-      resumeButton.setAttribute('disabled', 'disabled');
-      stopButton.removeAttribute('disabled');
-    }
-  });
 </script>
-<script src="forGame.js"></script>
 </body>
 </html>

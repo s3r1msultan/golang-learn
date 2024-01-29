@@ -5,25 +5,16 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Address</title>
-<!--    <link rel="icon" type="image/png" href="/FinalProject/aMainPage/favicon.png">-->
-<!--    <link rel="stylesheet" href="DeliveryStyle.css">-->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">-->
+    <link rel="icon" type="image/png" href="/FinalProject/aMainPage/favicon.png">
+    <link rel="stylesheet" href="DeliveryStyle.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="../UserProfilePage/UserProfile.html">My Profile</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../OrderHistoryPage/History.html">Order History</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../BonusPage/Bonus.html">Bonuses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../SupportPage/Support.html">Contact Support</a>
+                <a class="nav-link" href="/profile">My Profile</a>
             </li>
         </ul>
         <a href="../../index.html" class="btn btn-primary">Sign Out</a>
@@ -34,11 +25,7 @@
     <h1>Delivery Address</h1>
     <p>Please provide your delivery address below:</p>
 
-    <form id="delivery-form" action="http://localhost:8080/delivery" method="post">
-        <div class="mb-3">
-            <label for="fullName" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="fullName" placeholder="John Doe" name="full_name" required>
-        </div>
+    <form id="delivery-form" action="/delivery" method="post">
         <div class="mb-3">
             <label for="address" class="form-label">Address</label>
             <input type="text" class="form-control" id="address" placeholder="123 Main St" name="address" required>
@@ -57,7 +44,54 @@
         </div>
         <button type="submit" class="btn btn-primary">Save Address</button>
     </form>
+    <div id="form-feedback" class="alert" style="display: none; margin-top: 20px"></div>
+
 </div>
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let form = document.getElementById('delivery-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submit
+
+            let formData = new FormData(form);
+            let object = {};
+            object["id"] = Math.floor(Math.random()*500)
+            formData.forEach((value, key) => { object[key] = value; });
+            let jsonData = JSON.stringify(object);
+            console.log(jsonData)
+
+            fetch('/delivery', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: jsonData
+            })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    // Assuming the server sends back a JSON object with a message field
+                    let feedback = document.getElementById('form-feedback');
+                    feedback.className = 'alert alert-success'; // Bootstrap class for success messages
+                    feedback.textContent = data.message || 'Your delivery details have been successfully submitted!';
+                    feedback.style.display = 'block'; // Show the feedback message
+                })
+                .catch(function(error) {
+                    let feedback = document.getElementById('form-feedback');
+                    feedback.className = 'alert alert-danger'; // Bootstrap class for error messages
+                    feedback.textContent = 'There was an error submitting your delivery details: ' + error.message;
+                    feedback.style.display = 'block'; // Show the feedback message
+                    console.error('Error:', error);
+                });
+        });
+    });
+</script>
+
 </body>
 </html>
