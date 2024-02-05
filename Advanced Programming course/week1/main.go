@@ -14,7 +14,7 @@ type SignUpRequest struct {
 	Password  string `json:"password"`
 }
 
-type JsonRequest struct {
+type MessageRequest struct {
 	Message string `json:"message"`
 }
 
@@ -26,20 +26,20 @@ type JsonResponse struct {
 const PORT string = ":8080"
 
 func main() {
-	http.HandleFunc("/", handlePostRequest)
+	http.HandleFunc("/", handleMessage)
 	http.HandleFunc("/signup", handleSignup)
 	fmt.Printf("Server listening on port %s...\n", PORT)
 	http.ListenAndServe(PORT, nil)
 }
 
-func handlePostRequest(res http.ResponseWriter, req *http.Request) {
+func handleMessage(res http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	decoder := json.NewDecoder(req.Body)
-	var requestData JsonRequest
+	var requestData MessageRequest
 
 	err := decoder.Decode(&requestData)
 	if err != nil {
