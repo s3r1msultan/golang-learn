@@ -13,5 +13,5 @@ func ProfileRouter(r *mux.Router) {
 	router.Use(middlewares.JWTAuthentication)
 	router.HandleFunc("/{id}", controllers.ProfilePageHandler)
 	router.HandleFunc("/{id}/orders", controllers.OrdersPageHandler).Methods(http.MethodGet)
-	router.HandleFunc("/{id}/delivery", controllers.DeliveryPageHandler).Methods(http.MethodGet, http.MethodPut)
+	router.HandleFunc("/{id}/delivery", controllers.DeliveryPageHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPut)
 }

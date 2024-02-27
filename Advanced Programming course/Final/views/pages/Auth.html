@@ -237,13 +237,11 @@
             .then(async data => {
 
                 if(data.token && data.id) {
-                    // document.cookie = `mongodb_id=${data.id};path=/;`
-                    // document.cookie = `jwtToken=${data.token};path=/;`;
-                    // window.location.href = '/profile/' + data.id;
-
+                    console.log(data)
                     document.cookie = `object_Id=${data.id};path=/;SameSite=Strict;`;
                     document.cookie = `jwtToken=${data.token};path=/;SameSite=Strict;`;
-                    window.location.href = '/profile/' + data.id;
+                    console.log(data.cookie)
+                    // window.location.href = '/profile/' + data.id;
 
                 } else {
                     console.error('Authentication failed');

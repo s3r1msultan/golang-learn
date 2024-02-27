@@ -13,6 +13,8 @@
                         <a class="nav-link" href="/menu">Menu</a>
                     </li>
 
+                    {{if .ProfileID }}
+
                     {{if ne .CurrentSite "Support" }}
                     <li class="nav-item">
                         <a class="nav-link" href="/support">Contact Support</a>
@@ -37,6 +39,8 @@
                         <a class="nav-link" href="/profile/{{.ProfileID}}/cart">Cart</a>
                     </li>
                     {{end}}
+                    {{end}}
+
                     {{end}}
 
 
@@ -67,7 +71,6 @@
             } else {
                 profile.style.display = "none"
                 sign_in.style.display = "display"
-
             }
         })
         document.getElementById("sign_out").addEventListener('click', function(event) {

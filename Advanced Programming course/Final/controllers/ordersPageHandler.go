@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"final/models"
+	"fmt"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -29,7 +30,7 @@ func OrdersPageHandler(w http.ResponseWriter, r *http.Request) {
 		// TODO create dishes data
 	}
 	err := tmpl.ExecuteTemplate(w, "Orders.html", data)
-
+	fmt.Println(User.Orders)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Fatal(err)

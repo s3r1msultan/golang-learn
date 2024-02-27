@@ -15,8 +15,8 @@ import (
 )
 
 type Credentials struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `bson:"email" json:"email"`
+	Password string `bson:"password" json:"password"`
 }
 
 type Claims struct {
@@ -117,6 +117,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 	usersCollection := DBClient.Database("go_restaurants").Collection("users")
 	err = usersCollection.FindOne(context.TODO(), bson.M{"email": creds.Email}).Decode(&User)
 	if err != nil {
+		log.Fatal(err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
