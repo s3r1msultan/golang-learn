@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+{{ template "head.html" .HeadData}}
+<body>
+{{template "header.html" .HeaderData}}
+<header>
+  <h1>Order History</h1>
+</header>
+<table>
+  <thead>
+  <tr>
+    <th>Date</th>
+    <th>Ordered Dishes</th>
+    <th>Total Price</th>
+
+  </tr>
+  </thead>
+  <tbody>
+  {{ if .User.Orders }}
+    {{ range .User.Orders }}
+    <tr>
+      <td>{{ .OrderedDate }}</td>
+      <td>
+        {{ range .Dishes }}
+          {{ .Name }},
+        {{ end }}
+      </td>
+      <td>${{.TotalPrice}}</td>
+    </tr>
+    {{ end }}
+  {{ end }}
+  <tr>
+    <td>2023-09-28</td>
+    <td>Zucchini waffles with caviar, Salted oatmeal with parmesan and pine nuts</td>
+    <td>$19.95</td>
+  </tr>
+  </tbody>
+</table>
+
+{{ template "footer.html" }}
+
+</body>
+</html>

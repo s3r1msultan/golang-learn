@@ -1,0 +1,2 @@
+{"event":"application_started","level":"info","msg":"Application started","time":"2024-02-12T00:35:20+06:00"}
+{"action_type":"Handle Delivery","detail":"Data successfully received and inserted into MongoDB = true","level":"info","logged_at":"2024-02-12T00:35:43+06:00","msg":"Action logged","time":"2024-02-12T00:35:43+06:00","user_id":123}

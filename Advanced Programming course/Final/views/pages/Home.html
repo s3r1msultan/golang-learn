@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "head.html" .HeadData}}
+<body>
+{{template "header.html" .HeaderData}}
+
+<header class="container-fluid text-center py-4" style="background: linear-gradient(90deg, rgba(253,252,255,1) 0%, rgba(255,252,180,1) 50%, rgba(253,252,255,1) 100%)">
+    <h1>Welcome to Omii's Cuisine</h1>
+</header>
+
+<section class="about-us">
+    <div class="container">
+        <h2>About Us</h2>
+        <p>Discover a world of culinary delights at our restaurant. We pride ourselves on serving delicious dishes prepared with the finest ingredients and a touch of passion. Whether you're looking for a cozy dinner for two or a place to host a special event, we have you covered.</p>
+        <p>Our menu features a wide range of breakfast, lunch, and dinner options, each crafted to satisfy your cravings. Join us for a memorable dining experience that will tantalize your taste buds and leave you craving for more.</p>
+        <p>Visit us today and indulge in the flavors of Omii's Cuisine!</p>
+    </div>
+</section>
+
+<section class="image-carousel">
+    <div id="restaurantCarousel" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#restaurantCarousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#restaurantCarousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#restaurantCarousel" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://static.dezeen.com/uploads/2022/04/laurel-brasserie-bar_home-studios_dezeen_hero1-852x479.jpg" class="d-block" alt="Restaurant Interior 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://static.dezeen.com/uploads/2022/04/laurel-brasserie-bar_home-studios_dezeen_2364_col_2-852x568.jpg" class="d-block" alt="Restaurant Interior 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://static.dezeen.com/uploads/2022/04/laurel-brasserie-bar_home-studios_dezeen_2364_col_6-852x682.jpg" class="d-block" alt="Restaurant Interior 3">
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#restaurantCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#restaurantCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
+    </div>
+</section>
+
+<section class="reservation">
+    <div class="container">
+        <h2>Make a Reservation</h2>
+        <form>
+            <div class="form-group">
+                <label for="reservation-date">Date</label>
+                <input type="date" class="form-control" id="reservation-date" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-time">Time</label>
+                <input type="time" class="form-control" id="reservation-time" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-guests">Number of Guests</label>
+                <input type="number" class="form-control" id="reservation-guests" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-name">Name</label>
+                <input type="text" class="form-control" id="reservation-name" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-email">Email</label>
+                <input type="email" class="form-control" id="reservation-email" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation-phone">Phone</label>
+                <input type="tel" class="form-control" id="reservation-phone" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Reservation</button>
+        </form>
+    </div>
+</section>
+
+<section class="reviews">
+    <div class="container">
+        <h2>Customer Reviews</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="review">
+                    <img class="customer-img" src="https://img.freepik.com/premium-photo/3d-avatar-boy-character_914455-603.jpg" alt="Customer 1">
+                    <h3>John Doe</h3>
+                    <p>"I had an amazing dining experience at Omii's Cuisine. The food was exquisite, and the service was top-notch. I can't wait to visit again!"</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="review">
+                    <img class="customer-img" src="https://img.freepik.com/premium-photo/3d-cartoon-little-boy-red-hair-freckled-face-glasses-white-background_812426-4953.jpg" class="rounded-circle" alt="Customer 2">
+                    <h3>Jane Smith</h3>
+                    <p>"Omii's Cuisine is the perfect place for a romantic dinner. The ambiance is charming, and the food is simply divine. Highly recommended!"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{template "footer.html"}}
+
+<button onclick="topFunction()" id="scrollBtn" title="Go to top">Top</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.onscroll = function () {
+        scrollFunction();
+    };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById('scrollBtn').style.display = 'block';
+        } else {
+            document.getElementById('scrollBtn').style.display = 'none';
+        }
+    }
+
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+
+</script>
+</body>
+</html>

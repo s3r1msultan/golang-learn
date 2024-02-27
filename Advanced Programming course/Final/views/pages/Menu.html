@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "head.html" .HeadData}}
+
+<body>
+{{template "header.html" .HeaderData}}
+<header class="container-fluid text-center py-4 mb-4" style="background-color: beige">
+  <h1>Restaurant Menu</h1>
+  <form action="/menu" method="get" class="form-inline row gap-2">
+    <input type="text" name="minPrice" placeholder="Min Price" class="form-control mb-2 mr-sm-2 col">
+    <input type="text" name="maxPrice" placeholder="Max Price" class="form-control mb-2 mr-sm-2 col">
+    <select name="sort" class="form-control mb-2 mr-sm-2 col">
+      <option value="">Sort By</option>
+      <option value="asc">Price: Low to High</option>
+      <option value="desc">Price: High to Low</option>
+    </select>
+    <div class="row d-flex justify-content-center">
+      <button type="submit" class="btn btn-primary mb-2 col-6">Apply</button>
+
+    </div>
+  </form>
+</header>
+<section id="breakfast" class="container py-4">
+  <div class="row">
+    {{range .Dishes}}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img src="{{.ImgURL}}" class="card-img-top" alt="{{.Name}}">
+        <div class="card-body">
+          <h5 class="card-title">{{.Name}}</h5>
+          <p class="card-text">{{.Description}}</p>
+          <ul class="list-unstyled">
+            <li>Price: ${{.Price}}</li>
+            <li>Weight: {{.Weight}}g</li>
+            <li>Protein: {{.Proteins}}g</li>
+            <li>Fats: {{.Fats}}g</li>
+            <li>Carbohydrates: {{.Carbohydrates}}g</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {{end}}
+  </div>
+  <div class="col">
+    <nav aria-label="Page navigation example" class="mx-auto">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" data-page="1">1</a></li>
+        <li class="page-item"><a class="page-link" data-page="2">2</a></li>
+        <li class="page-item"><a class="page-link" data-page="3">3</a></li>
+        <li class="page-item"><a class="page-link" data-page="4">4</a></li>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+
+<hr>
+
+{{ template "footer.html"  }}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const params = new URLSearchParams(window.location.search);
+    document.querySelectorAll('.page-link').forEach(link => {
+      const page = link.getAttribute('data-page');
+      params.set('page', page);
+      link.href = `/menu?${params.toString()}`;
+    });
+  });
+</script>
+
+</body>
+</html>
