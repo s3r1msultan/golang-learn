@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "head.html" .HeadData}}
+
+<body>
+{{template "header.html" .HeaderData}}
+
+<header class="container-fluid text-center py-4 mb-4" style="background-color: beige">
+    <h1>Your Cart</h1>
+</header>
+
+<section class="container py-4">
+    {{if .Dishes}}
+    <ul class="list-group">
+        {{range .Dishes}}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{.Name}}
+            <div>
+                <span class="badge bg-primary rounded-pill">${{.Price}}</span>
+                <button class="btn btn-danger btn-sm ms-2 remove-item-btn" data-dish-id="{{.ObjectID.Hex}}">Remove</button>
+            </div>
+        </li>
+        {{end}}
+    </ul>
+    {{else}}
+    <p>Your cart is empty.</p>
+    {{end}}
+</section>
+
+{{ template "footer.html" }}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.remove-item-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const dishId = this.getAttribute('data-dish-id');
+                fetch('/profile/cart/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Include authorization headers if needed
+                    },
+                    body: JSON.stringify({ dishId: dishId }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.message === "Dish removed from cart successfully") {
+                            alert("Dish removed from cart!");
+                            // Optionally, update the UI or cart count
+                            location.reload(); // Refresh page to reflect changes
+                        } else {
+                            alert("Failed to remove dish from cart.");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

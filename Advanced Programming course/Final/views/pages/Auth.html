@@ -25,7 +25,7 @@
             <div class="slide-tab"></div>
         </div>
         <div class="form-inner">
-            <form action="" class="login" id="sign_in">
+            <form class="login" id="sign_in">
                 <div class="field">
                     <input type="text" id="login-email" name="email" placeholder="Email address" required />
                 </div>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="signup-link">New member? <a href="#">Signup now</a></div>
             </form>
-            <form action="" id="sign_up" class="signup">
+            <form id="sign_up" class="signup">
                 <div class="field">
                     <input type="text" id="signup-email" name="email" placeholder="Email address" required>
                 </div>
@@ -114,15 +114,10 @@
 
     // Function to display error messages
     function displayError(inputField, errorMessage) {
-        const errorDiv = inputField.nextElementSibling;
-        errorDiv.innerText = errorMessage;
-        errorDiv.style.display = 'block';
+
     }
-    // Function to clear error messages
     function clearError(inputField) {
-        const errorDiv = inputField.nextElementSibling;
-        errorDiv.innerText = '';
-        errorDiv.style.display = 'none';
+
     }
 
     // Check if the password and confirm password fields match
@@ -187,12 +182,10 @@
 
 
     document.getElementById("sign_in").addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent normal form submission
+        event.preventDefault();
 
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
-
-        console.log(data)
 
         fetch('/auth/sign_in', {
             method: 'POST',
@@ -204,57 +197,26 @@
             .then(response => response.json())
             .then(data => {
                 if(data.token) {
-                    document.cookie = `jwtToken=${data.token};path=/;SameSite=Strict;Secure`;
-                    window.location.href = '/profile/'+data.id;
-                } else {
-                    // Handle errors, e.g., show an error message
-                    console.error('Authentication failed');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    });
-    document.getElementById("sign_in").addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent normal form submission
-
-        if (passwordMatch()) {
-            alert('User registration successful');
-        } else {
-            alert('User registration failed');
-            return
-        }
-
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-
-        fetch('/auth/sign_in', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-            .then(response => response.json())
-            .then(async data => {
-
-                if(data.token && data.id) {
-                    console.log(data)
-                    document.cookie = `object_Id=${data.id};path=/;SameSite=Strict;`;
-                    document.cookie = `jwtToken=${data.token};path=/;SameSite=Strict;`;
-                    console.log(data.cookie)
-                    // window.location.href = '/profile/' + data.id;
-
+                    document.cookie = `token=${data.token};path=/;SameSite=Strict;`;
+                    if(data.isAdmin) {
+                        window.location.href = "/admin/users";
+                    } else {
+                        window.location.href = "/menu";
+                    }
                 } else {
                     console.error('Authentication failed');
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
+
     document.getElementById("sign_up").addEventListener('submit', function(event) {
-        event.preventDefault();
+        event.preventDefault(); // Prevent the default form submission
+
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
-
-        console.log(data)
 
         fetch('/auth/sign_up', {
             method: 'POST',
@@ -263,12 +225,26 @@
             },
             body: JSON.stringify(data),
         })
-            .then(response => response.json())
-            .then(data => {
-
+            .then(response => {
+                if(response.status === 400) {
+                    alert("A user with this email already exists. Please use a different email.");
+                    return null;
+                } else if(response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Something went wrong with the signup process.');
+                }
             })
-            .catch(error => console.error('Error:', error));
+            .then(data => {
+                if(data) {
+                    alert("Signup successful. Check your email and verify your account", data);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
+
 </script>
 </body>
 </html>

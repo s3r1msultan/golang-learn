@@ -98,9 +98,6 @@ body {
     flex-grow: 1;
     height: 110px;
 }
-footer p {
-    color: #666;
-}
 #scrollBtn {
     position: fixed;
     bottom: 20px;

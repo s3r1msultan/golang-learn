@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"final/middlewares"
 	"final/models"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -22,6 +23,11 @@ func OrdersPageHandler(w http.ResponseWriter, r *http.Request) {
 		ProfileID:   id,
 	}
 
+	objectId, err := middlewares.ParseObjectIdFromJWT(r)
+	if err == nil {
+		headerData.ProfileID = objectId.Hex()
+	}
+
 	data := models.PageData{
 		HeaderData: headerData,
 		HeadData:   headData,
@@ -29,7 +35,7 @@ func OrdersPageHandler(w http.ResponseWriter, r *http.Request) {
 		//	Dishes
 		// TODO create dishes data
 	}
-	err := tmpl.ExecuteTemplate(w, "Orders.html", data)
+	err = tmpl.ExecuteTemplate(w, "Orders.html", data)
 	fmt.Println(User.Orders)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

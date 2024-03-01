@@ -1,0 +1,16 @@
+footer.footer {
+    background-color: #343a40;
+    color: #fff;
+}
+footer.footer h3 {
+    color: #ffd700;
+}
+footer.footer a {
+    color: #f8f9fa;
+}
+footer.footer a:hover {
+    color: #ffd700;
+}
+.text-muted {
+    color: #6c757d !important;
+}

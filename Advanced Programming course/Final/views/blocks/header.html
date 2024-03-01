@@ -1,6 +1,6 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
+        <div class="container">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -24,19 +24,19 @@
                     {{if .CurrentSite}}
                     {{if ne .CurrentSite "Orders" }}
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile/{{.ProfileID}}/orders">Order History</a>
+                        <a class="nav-link" href="/profile/orders">Order History</a>
                     </li>
                     {{end}}
 
                     {{if ne .CurrentSite "Delivery" }}
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile/{{.ProfileID}}/delivery">Delivery Address</a>
+                        <a class="nav-link" href="/profile/delivery">Delivery Address</a>
                     </li>
                     {{end}}
 
                     {{if ne .CurrentSite "Cart" }}
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile/{{.ProfileID}}/cart">Cart</a>
+                        <a class="nav-link" href="/profile/cart">Cart</a>
                     </li>
                     {{end}}
                     {{end}}
@@ -46,36 +46,26 @@
 
                 </ul>
             </div>
-            <div id="sign_in">
-                <a class="btn btn-primary text-white" href="/auth">Sign in/Log in</a>
-            </div>
+
+            {{if .ProfileID }}
             <div id="profile">
                 <div class="d-flex align-items-center justify-content-center gap-3" >
                     {{if ne .CurrentSite "Profile" }}
-                        <a class="nav-link" href="/profile/{{.ProfileID}}">My Profile</a>
+                    <a class="nav-link" href="/profile">My Profile</a>
                     {{end}}
                     <a id="sign_out" class="btn btn-primary text-white">Sign Out</a>
                 </div>
             </div>
+            {{else}}
+            <div id="sign_in">
+                <a class="btn btn-primary text-white" href="/auth">Sign in/Log in</a>
+            </div>
+            {{end}}
 
 
         </div>
     </nav>
     <script>
-        document.addEventListener("DOMContentLoaded", (event) => {
-            const profile = document.getElementById("profile")
-            const sign_in = document.getElementById("sign_in")
-            if(document.cookie.includes("jwtToken")) {
-                profile.style.display = "block"
-                sign_in.style.display = "none"
-            } else {
-                profile.style.display = "none"
-                sign_in.style.display = "display"
-            }
-        })
-        document.getElementById("sign_out").addEventListener('click', function(event) {
-            document.cookie = 'jwtToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-            window.location.href = '/';
-        })
+
     </script>
 </header>

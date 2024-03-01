@@ -3,6 +3,8 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"final/db"
+	"final/middlewares"
 	"final/models"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -26,13 +28,18 @@ func DeliveryPageHandler(w http.ResponseWriter, r *http.Request) {
 			StyleName: "Delivery",
 		}
 
+		objectId, err := middlewares.ParseObjectIdFromJWT(r)
+		if err == nil {
+			headerData.ProfileID = objectId.Hex()
+		}
+
 		data := models.PageData{
 			HeaderData: headerData,
 			HeadData:   headData,
 			User:       User,
 		}
 
-		err := tmpl.ExecuteTemplate(w, "Delivery.html", data)
+		err = tmpl.ExecuteTemplate(w, "Delivery.html", data)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -55,7 +62,7 @@ func DeliveryPageHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		var result models.User
-		err = DBClient.Database("go_restaurants").Collection("users").
+		err = db.GetUsersCollection().
 			FindOneAndUpdate(
 				context.TODO(),
 				bson.M{"_id": objectId},

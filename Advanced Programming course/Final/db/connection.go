@@ -8,11 +8,7 @@ import (
 	"os"
 )
 
-func Connect() (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI(getURI())
-	client, err := mongo.Connect(context.TODO(), clientOptions)
-	return client, err
-}
+var MongoClient *mongo.Client
 
 func getURI() string {
 	URI := os.Getenv("MONGODB_URI")
@@ -20,4 +16,33 @@ func getURI() string {
 		log.Fatal("MongoDB URI is not appropriate. Please provide correct one. ")
 	}
 	return URI
+}
+
+func Connect() error {
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(getURI()).SetServerAPIOptions(serverAPI)
+
+	client, err := mongo.Connect(context.TODO(), opts)
+	if err != nil {
+		panic(err)
+	}
+	err = client.Ping(context.TODO(), nil)
+	MongoClient = client
+
+	return err
+}
+
+func GetDB() string {
+	DB := os.Getenv("DATABASE")
+	return DB
+}
+
+func GetUsersCollection() *mongo.Collection {
+	coll := os.Getenv("USERS_COLLECTION")
+	return MongoClient.Database(GetDB()).Collection(coll)
+}
+
+func GetDishesCollection() *mongo.Collection {
+	coll := os.Getenv("DISHES_COLLECTION")
+	return MongoClient.Database(GetDB()).Collection(coll)
 }

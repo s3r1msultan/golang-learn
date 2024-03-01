@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"final/db"
+	"final/initializers"
 	"final/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,7 +16,7 @@ import (
 )
 
 func GenerateToken() (string, error) {
-	bytes := make([]byte, 16) // 128-bit token
+	bytes := make([]byte, 16)
 	if _, err := rand.Read(bytes); err != nil {
 		return "", err
 	}
@@ -39,21 +40,18 @@ func SendVerificationEmail(to, token string) error {
 }
 
 func VerificationHandler(w http.ResponseWriter, r *http.Request) {
-	dbClient, err := db.Connect()
-	if err != nil {
-		http.Error(w, "An error occurred", http.StatusInternalServerError)
-	}
 	token := r.URL.Query().Get("token")
 	if token == "" {
+		initializers.LogError("token checking", nil, nil)
 		http.Error(w, "Token is required", http.StatusBadRequest)
 		return
 	}
 	var result models.User
-	err = dbClient.Database("go_restaurants").Collection("users").
+	err := db.GetUsersCollection().
 		FindOneAndUpdate(
 			context.TODO(),
 			bson.M{"verification_token": token},
-			bson.M{"$set": bson.M{"email_verified": true}},
+			bson.M{"$set": bson.M{"email_verified": true, "verification_token": ""}},
 		).Decode(&result)
 
 	if err != nil {
@@ -65,6 +63,4 @@ func VerificationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/auth", http.StatusSeeOther)
-	//w.WriteHeader(http.StatusOK)
-	//w.Write([]byte("Verification successful"))
 }

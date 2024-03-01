@@ -1,70 +1,42 @@
 package main
 
 import (
-	"final/controllers"
 	"final/db"
-	"final/routes"
+	"final/initializers"
+	"final/middlewares"
+	"final/routers"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
-	"os"
 )
 
-var dbClient *mongo.Client
-
 func main() {
-	initLogger()
-	initDotEnv()
-	dbClient, _ = db.Connect()
+	err := db.Connect()
+	if err != nil {
+		initializers.LogError("connection to db", err, nil)
+	}
 
 	r := mux.NewRouter()
 	r.StrictSlash(true)
 	r.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	r.Use(middlewares.LoggerMiddleware)
+	routers.HomeRouter(r.PathPrefix("/").Subrouter())
+	routers.SupportRouter(r.PathPrefix("/support").Subrouter())
+	routers.MenuRouter(r.PathPrefix("/menu").Subrouter())
+	routers.ProfileRouter(r.PathPrefix("/profile").Subrouter())
+	routers.AuthRouter(r.PathPrefix("/auth").Subrouter())
+	routers.VerificationRouter(r.PathPrefix("/verify").Subrouter())
+	routers.AdminRouter(r.PathPrefix("/admin").Subrouter())
 
-	r.HandleFunc("/", controllers.HomePageHandler).Methods(http.MethodGet)
-	r.HandleFunc("/support", controllers.SupportPageHandler).Methods(http.MethodGet, http.MethodPost)
-	routes.MenuRouter(r)
-	routes.ProfileRouter(r)
-	routes.AuthRouter(r)
-	routes.VerificationRouter(r)
-
-	PORT := getPort()
-	err := http.ListenAndServe(PORT, r)
+	PORT := initializers.GetPort()
+	err = http.ListenAndServe(PORT, r)
 	if err != nil {
-		log.Fatal("Error starting the server on the port " + PORT)
+		initializers.LogError("starting the server", err, nil)
 	}
 	log.Info("Listening to port: " + PORT)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
 }
 
-func getPort() string {
-	PORT := os.Getenv("PORT")
-	if PORT == "" {
-		return ":8080"
-	}
-	return ":" + PORT
-}
-
-func initDotEnv() {
-	err := godotenv.Load("./configs/.env")
-	if err != nil {
-		log.Fatal("Error loading .env files")
-	}
-}
-
-func initLogger() {
-	logFile := "log.txt"
-	f, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal("Failed to create logfile" + logFile)
-		panic(err)
-	}
-	//defer f.Close()
-	log.SetOutput(f)
-	log.SetLevel(log.DebugLevel)
+func init() {
+	initializers.InitLogger()
+	initializers.InitDotEnv()
 }
