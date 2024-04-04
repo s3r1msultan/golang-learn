@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"final/db"
-	"final/initializers"
 	"final/middlewares"
 	"final/models"
 	"github.com/dgrijalva/jwt-go"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -44,32 +44,39 @@ func AuthPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var err error
+	DBClient, err = db.Connect()
 	if err != nil {
-		initializers.LogError("decoding json while signing up", err, nil)
+		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	//err = r.ParseForm()
+	var user models.User
+	err = json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	//User := models.User{
+	//	Email:     r.FormValue("email"),
+	//	Password:  r.FormValue("password"),
+	//	FirstName: r.FormValue("first_name"),
+	//	LastName:  r.FormValue("last_name"),
+	//}
 
-	// Check if the user already exists
-	usersCollection := db.GetUsersCollection()
-	var existingUser models.User
-	err = usersCollection.FindOne(context.TODO(), bson.M{"email": user.Email}).Decode(&existingUser)
-	if err == nil {
-		// User exists
-		http.Error(w, "A user with this email already exists", http.StatusBadRequest)
-		return
-	}
-
+	// Hash the User's password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		initializers.LogError("generating hash password when signing up", err, nil)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	user.Password = string(hashedPassword)
-	user.IsAdmin = false
+
+	usersCollection := DBClient.Database("go_restaurants").Collection("users")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	token, err := GenerateToken()
 	if err != nil {
@@ -79,17 +86,14 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	user.VerificationToken = token
 	user.EmailVerified = false
-
 	_, err = usersCollection.InsertOne(context.TODO(), user)
 	if err != nil {
-		initializers.LogError("creating new user while signing up", err, nil)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = SendVerificationEmail(user.Email, token)
 	if err != nil {
-		initializers.LogError("sending verification email", err, nil)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -98,36 +102,36 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SigninHandler(w http.ResponseWriter, r *http.Request) {
-	var creds Credentials
-	err := json.NewDecoder(r.Body).Decode(&creds)
+	var err error
+	DBClient, err = db.Connect()
 	if err != nil {
-		initializers.LogError("decoding json while signing in", err, nil)
-		http.Redirect(w, r, "/auth", http.StatusSeeOther)
+		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	var creds Credentials
+	err = json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	usersCollection := db.GetUsersCollection()
+	usersCollection := DBClient.Database("go_restaurants").Collection("users")
 	err = usersCollection.FindOne(context.TODO(), bson.M{"email": creds.Email}).Decode(&User)
 	if err != nil {
-		initializers.LogError("finding the user", err, nil)
-		http.Redirect(w, r, "/auth", http.StatusSeeOther)
+		log.Fatal(err)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(User.Password), []byte(creds.Password))
 	if err != nil {
-		initializers.LogError("comparing hash password", err, nil)
-		http.Redirect(w, r, "/auth", http.StatusSeeOther)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	tokenString, err := middlewares.GenerateJWT(creds.Email, User.ObjectId)
+	tokenString, err := middlewares.GenerateJWT(creds.Email)
 	if err != nil {
-		initializers.LogError("comparing jwt token", err, nil)
-		http.Redirect(w, r, "/auth", http.StatusSeeOther)
+		log.Fatal("Problems with token")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
-	}
-	response := map[string]interface{}{
-		"token":   tokenString,
-		"isAdmin": User.IsAdmin,
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(map[string]string{"token": tokenString, "id": User.ObjectId.Hex()})
 }
