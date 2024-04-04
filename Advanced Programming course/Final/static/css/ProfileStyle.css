@@ -1,6 +1,4 @@
-.container{
-    background-color: #9d652d;
-}
+
 .list-group-item {
     margin-bottom: 10px;
 }
@@ -35,17 +33,6 @@
     margin: 0 auto;
 }
 
-.timer {
-    font-size: 36px;
-    font-weight: bold;
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-}
-.timer-controls {
-    margin-top: 20px;
-}
 
 
 input[type="number"] {

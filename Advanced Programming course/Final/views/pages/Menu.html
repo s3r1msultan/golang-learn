@@ -6,21 +6,24 @@
 {{template "header.html" .HeaderData}}
 <header class="container-fluid text-center py-4 mb-4" style="background-color: beige">
   <h1>Restaurant Menu</h1>
-  <form action="/menu" method="get" class="form-inline row gap-2">
-    <input type="text" name="minPrice" placeholder="Min Price" class="form-control mb-2 mr-sm-2 col">
-    <input type="text" name="maxPrice" placeholder="Max Price" class="form-control mb-2 mr-sm-2 col">
-    <select name="sort" class="form-control mb-2 mr-sm-2 col">
-      <option value="">Sort By</option>
-      <option value="asc">Price: Low to High</option>
-      <option value="desc">Price: High to Low</option>
-    </select>
-    <div class="row d-flex justify-content-center">
-      <button type="submit" class="btn btn-primary mb-2 col-6">Apply</button>
+  <div class="container">
+    <form action="/menu" method="get" class="form-inline row gap-2">
+      <input type="text" name="minPrice" placeholder="Min Price" class="form-control mb-2 mr-sm-2 col">
+      <input type="text" name="maxPrice" placeholder="Max Price" class="form-control mb-2 mr-sm-2 col">
+      <select name="sort" class="form-control mb-2 mr-sm-2 col">
+        <option value="">Sort By</option>
+        <option value="asc">Price: Low to High</option>
+        <option value="desc">Price: High to Low</option>
+      </select>
+      <div class="row d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary mb-2 col-6">Apply</button>
 
-    </div>
-  </form>
+      </div>
+    </form>
+  </div>
 </header>
 <section id="breakfast" class="container py-4">
+
   <div class="row">
     {{range .Dishes}}
     <div class="col-md-4 mb-4">
@@ -37,6 +40,7 @@
             <li>Carbohydrates: {{.Carbohydrates}}g</li>
           </ul>
         </div>
+        <button class="btn btn-primary add-to-cart-btn" data-dish-id="{{.ObjectID.Hex}}">Add to Cart</button>
       </div>
     </div>
     {{end}}
@@ -66,6 +70,32 @@
       const page = link.getAttribute('data-page');
       params.set('page', page);
       link.href = `/menu?${params.toString()}`;
+    });
+
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const dishId = this.getAttribute('data-dish-id');
+        console.log(dishId)
+
+        fetch('/profile/cart/add', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ dishId: dishId }),
+        })
+                .then(response => {
+                  if (response.ok) {
+                    alert("Dish added to cart successfully!");
+                  } else {
+                    alert("Failed to add dish to cart.");
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert("An error occurred while adding the dish to the cart.");
+                });
+      });
     });
   });
 </script>

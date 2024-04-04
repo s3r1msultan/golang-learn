@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"final/db"
+	"final/middlewares"
 	"final/models"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,28 +13,21 @@ import (
 )
 
 func MenuPageHandler(w http.ResponseWriter, r *http.Request) {
-	DBClient, err := db.Connect()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	minPriceParam := r.URL.Query().Get("minPrice")
 	maxPriceParam := r.URL.Query().Get("maxPrice")
 	sortParam := r.URL.Query().Get("sort")
 	pageParam := r.URL.Query().Get("page")
 	pageSizeParam := r.URL.Query().Get("pageSize")
-
 	minPrice, _ := strconv.ParseFloat(minPriceParam, 64)
 	maxPrice, _ := strconv.ParseFloat(maxPriceParam, 64)
 	page, _ := strconv.Atoi(pageParam)
 	pageSize, _ := strconv.Atoi(pageSizeParam)
 
 	if pageSize <= 0 {
-		pageSize = 15 // Default page size
+		pageSize = 15
 	}
 	if page <= 0 {
-		page = 1 // Default to first page
+		page = 1
 	}
 
 	var filter bson.M = bson.M{}
@@ -54,7 +48,7 @@ func MenuPageHandler(w http.ResponseWriter, r *http.Request) {
 		findOptions.SetSort(bson.D{{"price", -1}})
 	}
 
-	collection := DBClient.Database("go_restaurants").Collection("dishes")
+	collection := db.GetDishesCollection()
 	ctx := context.TODO()
 
 	cursor, err := collection.Find(ctx, filter, findOptions)
@@ -77,6 +71,10 @@ func MenuPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	headerData := models.HeaderData{CurrentSite: "Menu"}
+	objectId, err := middlewares.ParseObjectIdFromJWT(r)
+	if err == nil {
+		headerData.ProfileID = objectId.Hex()
+	}
 
 	data := models.PageData{
 		HeaderData: headerData,

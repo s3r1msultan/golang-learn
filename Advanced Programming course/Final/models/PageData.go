@@ -5,4 +5,5 @@ type PageData struct {
 	HeadData   HeadData
 	User       User
 	Dishes     []DishData
+	Users      []User
 }

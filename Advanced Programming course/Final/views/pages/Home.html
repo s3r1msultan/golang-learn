@@ -46,39 +46,6 @@
     </div>
 </section>
 
-<section class="reservation">
-    <div class="container">
-        <h2>Make a Reservation</h2>
-        <form>
-            <div class="form-group">
-                <label for="reservation-date">Date</label>
-                <input type="date" class="form-control" id="reservation-date" required>
-            </div>
-            <div class="form-group">
-                <label for="reservation-time">Time</label>
-                <input type="time" class="form-control" id="reservation-time" required>
-            </div>
-            <div class="form-group">
-                <label for="reservation-guests">Number of Guests</label>
-                <input type="number" class="form-control" id="reservation-guests" min="1" required>
-            </div>
-            <div class="form-group">
-                <label for="reservation-name">Name</label>
-                <input type="text" class="form-control" id="reservation-name" required>
-            </div>
-            <div class="form-group">
-                <label for="reservation-email">Email</label>
-                <input type="email" class="form-control" id="reservation-email" required>
-            </div>
-            <div class="form-group">
-                <label for="reservation-phone">Phone</label>
-                <input type="tel" class="form-control" id="reservation-phone" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit Reservation</button>
-        </form>
-    </div>
-</section>
-
 <section class="reviews">
     <div class="container">
         <h2>Customer Reviews</h2>
@@ -103,27 +70,6 @@
 
 {{template "footer.html"}}
 
-<button onclick="topFunction()" id="scrollBtn" title="Go to top">Top</button>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    window.onscroll = function () {
-        scrollFunction();
-    };
-
-    function scrollFunction() {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            document.getElementById('scrollBtn').style.display = 'block';
-        } else {
-            document.getElementById('scrollBtn').style.display = 'none';
-        }
-    }
-
-    function topFunction() {
-        document.body.scrollTop = 0; // For Safari
-        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }
-
-</script>
 </body>
 </html>
