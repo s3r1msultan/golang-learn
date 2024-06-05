@@ -66,28 +66,26 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 		Conn:     conn,
 		Message:  make(chan *Message),
 	}
-	m := &Message{
-		Username: username,
-		RoomID:   roomID,
-		Content:  username + " has joined the room",
-	}
 	h.hub.Register <- client
-	h.hub.Broadcast <- m
 	go client.writeMessage()
 	client.readMessage(h.hub)
+	c.JSON(200, h.hub.Rooms[roomID])
+
 }
 
 type RoomRes struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	AmountOfUsers int    `json:"amount_of_users"`
 }
 
 func (h *Handler) GetRooms(c *gin.Context) {
 	rooms := make([]RoomRes, 0)
 	for _, r := range h.hub.Rooms {
 		rooms = append(rooms, RoomRes{
-			ID:   r.ID,
-			Name: r.Name,
+			ID:            r.ID,
+			Name:          r.Name,
+			AmountOfUsers: len(r.Clients),
 		})
 	}
 	c.JSON(200, rooms)

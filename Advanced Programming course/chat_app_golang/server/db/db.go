@@ -38,12 +38,6 @@ func GetDB() string {
 	return DB
 }
 
-func GetUsersCollection() *mongo.Collection {
-	coll := os.Getenv("USERS_COLLECTION")
-	return MongoClient.Database(GetDB()).Collection(coll)
-}
-
-func GetDishesCollection() *mongo.Collection {
-	coll := os.Getenv("CHATS_COLLECTION")
-	return MongoClient.Database(GetDB()).Collection(coll)
+func Disconnect() {
+	MongoClient.Disconnect(context.TODO())
 }

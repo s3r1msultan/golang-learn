@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"os"
 	"server/internal/util"
 	"time"
@@ -32,6 +33,7 @@ func (s *service) CreateUser(ctx context.Context, req *CreateUserReq) (*CreateUs
 	}
 
 	u := &User{
+		ObjectId: primitive.NewObjectID(),
 		Email:    req.Email,
 		Username: req.Username,
 		Password: hashedPassword,
@@ -42,6 +44,7 @@ func (s *service) CreateUser(ctx context.Context, req *CreateUserReq) (*CreateUs
 		return nil, err
 	}
 	return &CreateUserRes{
+		ID:       user.ObjectId.Hex(),
 		Username: user.Username,
 		Email:    user.Email,
 	}, nil
@@ -79,6 +82,7 @@ func (s *service) Login(ctx context.Context, req *LoginUserReq) (*LoginUserRes, 
 	}
 	return &LoginUserRes{
 		accessToken: tokenString,
+		ID:          user.ObjectId.Hex(),
 		Username:    user.Username,
 		Email:       user.Email,
 	}, nil

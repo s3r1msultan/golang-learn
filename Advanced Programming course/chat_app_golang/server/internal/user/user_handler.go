@@ -44,6 +44,7 @@ func (h *Handler) Login(c *gin.Context) {
 	res := &LoginUserRes{
 		Username: u.Username,
 		Email:    u.Email,
+		ID:       u.ID,
 	}
 	c.JSON(200, res)
 }
