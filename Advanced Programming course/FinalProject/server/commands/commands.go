@@ -28,6 +28,8 @@ func HandleCommands(conn net.Conn, nickname *string, message string, logFile *os
 		if len(parts) == 2 {
 			changeNickname(conn, nickname, parts[1])
 		}
+	} else if strings.HasPrefix(message, "/statistics") {
+		sendStatistics(conn)
 	} else if strings.HasPrefix(message, "/users") {
 		sendUsersList(conn)
 	} else if strings.HasPrefix(message, "/bot task") {
@@ -49,11 +51,26 @@ func HandleCommands(conn net.Conn, nickname *string, message string, logFile *os
 		logMessage(*nickname, message, logFile)
 		response := fmt.Sprintf("%s: %s\n", *nickname, message)
 		broadcastMessage(response, conn)
+		state.Mutex.Lock()
+		state.MessageCount++
+		state.Mutex.Unlock()
 	}
 
 	currentTime := time.Now().Format(time.RFC1123)
 	logEntry := fmt.Sprintf("%s: %s - %s\n", currentTime, state.Addr[conn], message)
 	state.AddLogEntry(logEntry)
+}
+
+func sendStatistics(conn net.Conn) {
+	state.Mutex.Lock()
+	defer state.Mutex.Unlock()
+
+	totalUsers := state.CurrentUsers
+	currentUsers := len(state.Clients)
+	totalMessages := state.MessageCount
+	message := fmt.Sprintf("Current connected users: %d\nTotal connected users: %d\nTotal messages sent: %d\n", totalUsers, currentUsers, totalMessages)
+	encryptedMessage, _ := crypto.EncryptMessage(message)
+	conn.Write([]byte(encryptedMessage + "\n"))
 }
 
 func handleBotTaskCommands(conn net.Conn, nickname *string, message string) {

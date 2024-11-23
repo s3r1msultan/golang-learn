@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"final_project/server/commands"
 	"final_project/server/crypto"
+	"final_project/server/state"
 	"fmt"
 	"log"
 	"net"
@@ -34,6 +35,11 @@ func HandleConnection(conn net.Conn) {
 	}
 
 	mutex.Lock()
+	if _, exists := state.UniqueUsers[clientIP]; !exists {
+		state.UniqueUsers[clientIP] = true
+		state.CurrentUsers++
+	}
+
 	clients[conn] = nickname
 	addr[conn] = clientIP
 	mutex.Unlock()
@@ -41,6 +47,7 @@ func HandleConnection(conn net.Conn) {
 	defer func() {
 		mutex.Lock()
 		delete(clients, conn)
+		state.CurrentUsers -= 1
 		delete(addr, conn)
 		mutex.Unlock()
 		conn.Close()

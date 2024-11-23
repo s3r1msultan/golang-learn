@@ -15,6 +15,9 @@ var (
 	TaskIDCounter int
 	Tasks         = make(map[string]Task)
 	HistoryLog    = "history.log"
+	UniqueUsers   = make(map[string]bool)
+	CurrentUsers  int
+	MessageCount  int
 )
 
 type Task struct {

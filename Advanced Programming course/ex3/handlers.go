@@ -32,7 +32,7 @@ func handleChat(openAICall OpenAICaller) httprouter.Handle {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	http.ServeFile(w, r, "public/index.html")
+	http.ServeFile(w, r, "public1/index.html")
 }
 
 func historyHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
